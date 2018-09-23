@@ -1,0 +1,67 @@
+<md-card class="md-whiteframe-1dp md-padding">
+<form role="form" name="thisForm1">
+     <div layout="row">
+          <md-input-container flex="30">
+		     <label> Start Date(yyyy-mm-dd format)</label>
+			 <input name="from_day" ng-model="parfrom_day" datetime-picker date-format="yyyy-MM-dd" date-only required onkeydown="return !(event.keyCode==13)"/>	
+			 <div ng-messages="thisForm1.from_day.$error">
+               <div ng-message='required'>required.</div>
+               <div ng-message='pattern'>Enter a Valid Date. (yyyy-mm-dd format)</div>
+	          </div>
+		   </md-input-container>
+          <md-input-container flex="30">
+		     <label> Start Date(yyyy-mm-dd format)</label>
+			 <input name="to_day" ng-model="parto_day" datetime-picker date-format="yyyy-MM-dd" date-only required onkeydown="return !(event.keyCode==13)"/>	
+			 <div ng-messages="thisForm1.to_day.$error">
+               <div ng-message='required'>required.</div>
+               <div ng-message='pattern'>Enter a Valid Date. (yyyy-mm-dd format)</div>
+	          </div>
+		   </md-input-container>   
+           
+           <md-input-container flex="20">
+				  <md-button ng-disabled="thisForm1.$invalid" 
+						ng-click="get_stock_report(parfrom_day, parto_day)" class="" style="background:#00800070; color:white;">
+						View History
+					</md-button>
+                </md-input-container>    
+	          </div>
+         
+          </form>     
+          <br><br><br>
+  <div class="table-responsive-vertical"> 
+     <table id="table" class="table table-hover">
+		<thead>
+		  <tr>
+			<th width="5%">No</th>
+			<th width="15%">Ingredient</th>
+			<th width="10%">Opening</th>
+			<th width="10%">Deliver</th>
+			<th width="10%">Available</th>
+			<th width="10%">Ending</th>
+			<th width="10%">Actual</th>
+			<th width="10%">Ideal</th>
+			<th width="10%">Variance</th>
+			<th width="20%">DateTime</th>
+			<!--<th width="10%">Remarks</th>-->
+		  </tr>
+		</thead>
+
+		<tbody>
+		  	<tr ng-repeat="e in thedaystock |orderBy:sortKey:reverse">
+			    <td data-title="ID">{{ $index+1 }}</td>
+			    <td data-title="Ingredient">{{ e.title }}</td>
+			    <td data-title="Opening">{{ e.stock_previous }}</td>
+			    <td data-title="Deliver">{{ e.deliver }}</td>
+			    <td data-title="Available">{{ e.available }}</td>
+			    <td data-title="Ending">{{ e.quantity }}</td>
+			    <td data-title="Actual">{{ e.actual }}</td>
+			    <td data-title="Ideal">{{ e.ideal }}</td>
+			    <td data-title="Variance">{{ e.varian }}</td>
+			    <td data-title="DateTime">{{ e.datetim }}</td>
+			    <!--<td data-title="Time">{{  }}</td>-->		     
+	   	    </tr>
+		</tbody>
+	</table> 
+	 
+ </div>
+</md-card>
