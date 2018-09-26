@@ -40,7 +40,6 @@ angular.module('App').factory("services", function($http) {
   
   obj.generateInvoice = function (build) {
     return $http.post('api/build_order.php', build).then(function (status) {
-		
         return status.data;
     });
   };
@@ -119,8 +118,8 @@ angular.module('App').factory("services", function($http) {
   }
 
 
-   obj.insertOrder = function (myorder) {
-    return $http.post(serviceBase + 'insert_order', myorder).then(function (status) {
+   obj.insertOrder = function (myorder,orderNoReset) {
+    return $http.post(serviceBase + 'insert_order', {order:myorder,orderNoReset:orderNoReset}).then(function (status) {
 		//alert(JSON.stringify(status, null, 4));
 	
       return status.data;
@@ -169,6 +168,42 @@ angular.module('App').factory("services", function($http) {
         return status.data;
     });
   };
+
+  // Topping Transaction
+
+  obj.getToppings = function () {
+    return $http.get(serviceBase + 'toppings');
+  }
+
+  obj.getToppingByID = function (id) {
+    return $http.get(serviceBase + 'toppings_by_id?id=' + id);
+  }
+
+
+  obj.insertTopping = function (toppings) {
+    return $http.post(serviceBase + 'insert_toppings', toppings).then(function (status) {
+      //alert(JSON.stringify(status, null, 4));
+      return status.data;
+    });
+  };
+
+  obj.updateTopping = function (id, toppings) {
+    return $http.post(serviceBase + 'update_toppings', {
+      id: id,
+      toppings: toppings
+    }).then(function (status) {
+      return status.data;
+    });
+  };
+
+
+  // update ingredient
+  
+obj.updateIngredientByTopping=function (id,amount) {
+  return $http.post(serviceBase + 'updateIngredientBytopping',{id:id, amount:amount}).then(function (status) {
+    return status.data;
+  });
+}
 
 
  // Product Ingredient Consumption Transaction

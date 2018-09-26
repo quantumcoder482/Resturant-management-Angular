@@ -4,8 +4,10 @@ function($rootScope, $scope, $http, $mdToast, $cookies, $mdDialog, $route, servi
 
 	$rootScope.pagetitle = 'Sales Report';
 	var self             = $scope;
-	var root             = $rootScope;	
-    self.loading         = true;
+  var root             = $rootScope;
+  root.toolbar_menu = null;
+  
+  self.loading         = true;
 	var today_report = {start_date : toISOLocal(new Date()).split("T")[0], end_date : toISOLocal(new Date()).split("T")[0], type : 5};
 	self.dates = angular.copy(today_report);
 	self.daytable = false;

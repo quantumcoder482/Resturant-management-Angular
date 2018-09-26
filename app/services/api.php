@@ -5,16 +5,16 @@
 		public $data = "";
 		
 
-//		const DB_SERVER = "localhost";
-//		const DB_USER = "root";                
-//		const DB_PASSWORD = "";
-//		const DB = "buzzbe6_dominee";
-
-
 		const DB_SERVER = "localhost";
-		const DB_USER = "buzzbtfx_buzzbee";                
-		const DB_PASSWORD = "buzzbee123";
-		const DB = "buzzbe6_dominee"; 
+		const DB_USER = "root";                
+		const DB_PASSWORD = "";
+		const DB = "buzzbe6_dominee";
+
+
+		// const DB_SERVER = "localhost";
+		// const DB_USER = "buzzbtfx_buzzbee";                
+		// const DB_PASSWORD = "buzzbee123";
+		// const DB = "buzzbe6_dominee"; 
 
 
 		private $db = NULL;
@@ -197,7 +197,7 @@
 			}	
 			$sdate = $this->_request['from'].' 00:00:00';
 			$edate = $this->_request['to'].' 23:59:59';
-			$query="SELECT `stock`.*, `ingredients`.title, `ingredients`.stock, `ingredients`.unit FROM `stock` LEFT JOIN `ingredients` ON `stock`.ingredient = `ingredients`.id WHERE datetim >='$sdate' AND datetim <= '$edate' ORDER BY datetim DESC";
+			$query="SELECT `stock`.*, `ingredients`.title, `ingredients`.stock, `ingredients`.unit FROM `stock` LEFT JOIN `ingredients` ON `stock`.ingredient = `ingredients`.id WHERE date_time >='$sdate' AND date_time <= '$edate' ORDER BY date_time DESC";
 			$this->get_list($query);
 		}		
 		
@@ -207,7 +207,7 @@
 			}
 			
 			$id = (int)$this->_request['id'];
-			$query="select s.*, i.title, i.stock, i.unit from stock s, ingredients i where s.ingredient='$id' and s.ingredient=i.id order by datetime DESC";
+			$query="select s.*, i.title, i.stock, i.unit from stock s, ingredients i where s.ingredient='$id' and s.ingredient=i.id order by date_time DESC";
 			$this->get_list($query);
 		}		
 
@@ -216,7 +216,7 @@
 				$this->response('',406);
 			}
 			
-			$query="SELECT a.*, MAX(b.datetime) AS lasttime, b.quantity, b.stock_previous, b.remarks FROM `ingredients` a LEFT JOIN `stock` b ON a.id = b.ingredient GROUP BY a.id ORDER BY id ASC ";
+			$query="SELECT a.*, MAX(b.date_time) AS lasttime, b.quantity, b.stock_previous, b.remarks FROM `ingredients` a LEFT JOIN `stock` b ON a.id = b.ingredient GROUP BY a.id ORDER BY id ASC ";
 			$this->get_list($query);
 		}	
 
@@ -244,7 +244,7 @@
 			}
 			$stock = json_decode(file_get_contents("php://input"),true);
 			$stock['remarks']=mysqli_real_escape_string($this->mysqli, $stock['remarks']);
-			$column_names = array('ingredient', 'quantity', 'remarks','stock_previous','stock_actual');
+			$column_names = array('ingredient', 'quantity', 'remarks','stock_previous','actual');
 			$table_name = 'stock';
 			$this->post_one($stock, $column_names, $table_name);
 		}
@@ -253,7 +253,7 @@
 			if($this->get_request_method() != "GET"){
 				$this->response('',406);
 			}
-			$sql = "UPDATE `ingredients`, ( SELECT t.quantity, t.ingredient, t.stock_previous FROM (SELECT * , MAX(datetim) AS sss FROM `stock` GROUP BY ingredient ) r INNER JOIN `stock` t ON r.ingredient = t.ingredient AND r.sss = t.datetim) v SET `ingredients`.stock = v.quantity WHERE `ingredients`.id = v.ingredient";
+			$sql = "UPDATE `ingredients`, ( SELECT t.quantity, t.ingredient, t.stock_previous FROM (SELECT * , MAX(date_time) AS sss FROM `stock` GROUP BY ingredient ) r INNER JOIN `stock` t ON r.ingredient = t.ingredient AND r.sss = t.date_time) v SET `ingredients`.stock = v.quantity WHERE `ingredients`.id = v.ingredient";
 			if ($this->mysqli->query($sql)) {	
 				$msg 	= " Opening updated successfully";
 				$resp = array('status' => 'success', "msg" => $msg, "data" => "");
@@ -270,7 +270,7 @@
 			$stock = json_decode(file_get_contents("php://input"),true);
 
 			$insert_Array = array();
-			$column_names = array('ingredient', 'quantity', 'datetim', 'stock_previous', 'remarks', 'deliver', 'available', 'actual', 'ideal', 'varian');
+			$column_names = array('ingredient', 'quantity', 'date_time', 'stock_previous', 'remarks', 'deliver', 'available', 'actual', 'ideal', 'varian');
 			$table_name = 'stock';
 
 			foreach ($stock as $item){
@@ -298,7 +298,7 @@
 					}
 					$trr['stock_previous'] = $item['stock'];
 					$trr['remarks']=mysqli_real_escape_string($this->mysqli, $item['remarks']);
-					$trr['datetim'] = date("Y-m-d h:i:s");
+					$trr['date_time'] = date("Y-m-d h:i:s");
 					$insert_Array[] = $trr;
 				}
 			}
@@ -376,7 +376,7 @@
 			$this->get_list($query);
 		 }
 		  
-		  	private function order_by_id(){	
+		private function order_by_id(){	
 			if($this->get_request_method() != "GET"){
 				$this->response('',406);
 			}
@@ -386,22 +386,43 @@
 			$this->get_list($query);
 		}
 		
-			private function insert_order(){
+		private function insert_order(){
+
 			if($this->get_request_method() != "POST"){
 				$this->response('',406);
 			}
 			
 			$myorder = json_decode(file_get_contents("php://input"),true);
-			//print_r($myorder);
-			$myorder['user_id'] = intval($myorder['user_id']);
-			$myorder['contact_name']=mysqli_real_escape_string($this->mysqli, $myorder['contact_name']);
-			$myorder['contact_address']=mysqli_real_escape_string($this->mysqli, $myorder['contact_address']);
-			$myorder['order_comment']=mysqli_real_escape_string($this->mysqli, $myorder['order_comment']);
-			$myorder['item_names']=mysqli_real_escape_string($this->mysqli, $myorder['item_names']);
 			
-			$column_names = array('items', 'quantity', 'prices','item_names','user_id','contact_name','contact_number','contact_address','bill_amount','payable_amount','order_comment','discount','cgst','sgst','order_cgst','order_sgst','type');
+			$orderNoReset=$myorder['orderNoReset'];
+			if($orderNoReset){
+				$myorder['order']['order_num']=1;
+			}else{
+				$query = "SELECT * FROM myorder order by id DESC limit 1";
+				$r = $this->mysqli->query($query) or die($this->mysqli->error.__LINE__);
+				if($r->num_rows > 0) {
+					$result = $r->fetch_assoc();	
+					
+					if($result['order_num'] != 0){
+						$myorder['order']['order_num']=(int)$result['order_num']+1;
+					}else{
+						$myorder['order']['order_num']=(int)$result['id']+1;
+					}
+
+				}else{
+					$myorder['order']['order_num']=1;
+				}
+			}
+
+			$myorder['order']['user_id'] = intval($myorder['order']['user_id']);
+			$myorder['order']['contact_name']=mysqli_real_escape_string($this->mysqli, $myorder['order']['contact_name']);
+			$myorder['order']['contact_address']=mysqli_real_escape_string($this->mysqli, $myorder['order']['contact_address']);
+			$myorder['order']['order_comment']=mysqli_real_escape_string($this->mysqli, $myorder['order']['order_comment']);
+			$myorder['order']['item_names']=mysqli_real_escape_string($this->mysqli, $myorder['order']['item_names']);
+			
+			$column_names = array('order_num','items', 'quantity', 'prices','item_names','user_id','contact_name','contact_number','contact_address','bill_amount','payable_amount','order_comment','discount','cgst','sgst','order_cgst','order_sgst','type');
 			$table_name = 'myorder';
-			$this->post_one($myorder, $column_names, $table_name);
+			$this->post_one($myorder['order'], $column_names, $table_name);
 		}	
 
 		private function deleteOrder(){
@@ -467,6 +488,86 @@
 			$table_name = 'ingredients';
 			$this->post_update($id, $ingredients, $column_names, $table_name);
 		}
+
+
+		
+	    /*
+		 *  TOPPINGS TRANSACTION
+		 */		
+		 
+		 private function toppings(){
+			if($this->get_request_method() != "GET"){
+				$this->response('',406);
+			}
+			$query="SELECT * from toppings";
+			$this->get_list($query);
+		} 
+		
+		private function toppings_by_id(){	
+			if($this->get_request_method() != "GET"){
+				$this->response('',406);
+			}
+			$id = (int)$this->_request['id'];
+			
+			$query="SELECT * from toppings where id='$id'";
+			$this->get_list($query);
+		}
+		
+		private function insert_toppings(){
+			if($this->get_request_method() != "POST"){
+				$this->response('',406);
+			}
+			$toppings = json_decode(file_get_contents("php://input"),true);
+			$toppings['ingredient_id']=mysqli_real_escape_string($this->mysqli, $toppings['ingredient_id']);
+			$toppings['title']=mysqli_real_escape_string($this->mysqli, $toppings['title']);
+			$toppings['unit']=mysqli_real_escape_string($this->mysqli, $toppings['unit']);
+			$toppings['amount']=mysqli_real_escape_string($this->mysqli, $toppings['amount']);
+			$toppings['price']=mysqli_real_escape_string($this->mysqli, $toppings['price']);
+			$column_names = array('ingredient_id','title','unit','amount','price');
+			$table_name = 'toppings';
+			$this->post_one($toppings, $column_names, $table_name);
+		}		
+
+		private function update_toppings(){
+			if($this->get_request_method() != "POST"){
+				$this->response('',406);
+			}
+			$toppings = json_decode(file_get_contents("php://input"),true);
+			$id = (int)$toppings['id'];
+			$toppings['toppings']['ingredient_id']=mysqli_real_escape_string($this->mysqli, $toppings['toppings']['ingredient_id']);
+			$toppings['toppings']['title']=mysqli_real_escape_string($this->mysqli, $toppings['toppings']['title']);
+			$toppings['toppings']['unit']=mysqli_real_escape_string($this->mysqli, $toppings['toppings']['unit']);
+			$toppings['toppings']['amount']=mysqli_real_escape_string($this->mysqli, $toppings['toppings']['amount']);
+			$toppings['toppings']['price']=mysqli_real_escape_string($this->mysqli, $toppings['toppings']['price']);
+			$column_names = array('ingredient_id','title','unit','amount','price');
+			$table_name = 'toppings';
+			$this->post_update($id, $toppings, $column_names, $table_name);
+		}
+
+		/* 
+		 *  UPDATE INGREDIENT BY TOPPINGS
+		 */
+
+		private function updateIngredientBytopping(){
+			if($this->get_request_method() != "POST") {
+				$this->response('', 406);
+			}
+			$updatedata=json_decode(file_get_contents("php://input"),true);
+			$id = (int)$updatedata['id'];
+			$amount=floatval($updatedata['amount']);
+			$query="SELECT * FROM ingredients where id='$id'";
+			$r = $this->mysqli->query($query) or die($this->mysqli->error.__LINE__);
+			if($r->num_rows > 0) {
+				$result = $r->fetch_assoc();	
+			}
+			$res=$result['stock']-$amount;
+			
+			$query="UPDATE ingredients SET stock='$res' WHERE id='$id'";
+			$this->update_one($query);
+
+
+		}
+
 
 		
 		/*
@@ -938,7 +1039,7 @@
 				$values 	= $values."'".$$desired_key."',";
 			}
 			$query = "INSERT INTO ".$table_name."(".trim($columns,',').") VALUES(".trim($values,',').")";
-			//echo "QUERY : ".$query;
+			// echo "QUERY : ".$query;
 			if(!empty($obj)){
 				//$r = $this->mysqli->query($query) or trigger_error($this->mysqli->error.__LINE__);
 				if ($this->mysqli->query($query)) {

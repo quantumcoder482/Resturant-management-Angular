@@ -41,8 +41,8 @@
         
          <md-input-container flex="30">
           <label>Actual(Available) Stock</label>
-          <input type="number" ng-pattern="^[0-9]" required name="stock_actual" ng-model="stock.stock_actual" maxlength="11" onkeydown="return !(event.keyCode==13)">
-          <div ng-messages="thisForm.stock_actual.$error">
+          <input type="number" ng-pattern="^[0-9]" required name="actual" ng-model="stock.actual" maxlength="11" onkeydown="return !(event.keyCode==13)">
+          <div ng-messages="thisForm.actual.$error">
             <div ng-message="required">required.</div>
           </div>
         </md-input-container>

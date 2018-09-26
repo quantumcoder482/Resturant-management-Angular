@@ -8,47 +8,54 @@ angular.module('App').config(
   }
 );
 
+// angular.module('App').config(
+//   function ($mdAriaProvider) {
+//     // Globally disables all ARIA warnings.
+//     $mdAriaProvider.disableWarnings();
+//   }
+// );
+
 angular.module('App').config(['$routeProvider', function($routeProvider) {
     $routeProvider.
 	
-	   when('/home', {
+	    when('/home', {
         templateUrl : 'templates/page/home/home.html',
         controller  : 'HomeController'
       }).
-	   when('/pos', {
+	    when('/pos', {
         templateUrl : 'templates/page/pos/pos.html',
         controller  : 'PosController'
       }).
-	   when('/report', {
+	    when('/report', {
         templateUrl : 'templates/page/report/report.html',
         controller  : 'ReportController'
       }).
-	  when('/product/:page', {
+	    when('/product/:page', {
         templateUrl : 'templates/page/product/product.html',
         controller  : 'ProductController'
       }).
 	   
-	   when('/product_add/', {
+	    when('/product_add/', {
         templateUrl : 'templates/page/product/product_new.html',
         controller  : 'ProductAddController'
       }).
 	 
-	  when('/product_edit/:id', {
+	    when('/product_edit/:id', {
         templateUrl : 'templates/page/product/product_edit.html',
         controller  : 'ProductEditController'
       }).
       
-     when('/consumption/:id', {
+      when('/consumption/:id', {
         templateUrl : 'templates/page/consumption/consumption.html',
         controller  : 'ConsumptionController'
       }).
 	  
-	  when('/category', {
+	    when('/category', {
         templateUrl : 'templates/page/category/category.html',
         controller  : 'CategoryController'
       }).
 	  
-	  when('/ingredient', {
+	    when('/ingredient', {
         templateUrl : 'templates/page/ingredients/ingredients.html',
         controller  : 'IngredientController'
       }).
@@ -56,6 +63,10 @@ angular.module('App').config(['$routeProvider', function($routeProvider) {
 	   when('/subcategory', {
         templateUrl : 'templates/page/subcategory/subcategory.html',
         controller  : 'SubcategoryController'
+      }).
+      when('/topping', {
+        templateUrl: 'templates/page/topping/topping.html',
+        controller: 'ToppingController'
       }).
 	   when('/stock/:id', {
         templateUrl : 'templates/page/stock/stock.html',
@@ -93,13 +104,15 @@ angular.module('App').config(['$routeProvider', function($routeProvider) {
         controller  : 'RorderController'
       }).
 	 
-	  otherwise({
+      otherwise({
         redirectTo  : '/login'
       });
-}]);
-
-angular.module('App').run(function($location, $rootScope) {
-  $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
-    $rootScope.title = current.$$route.title;
-  });
-});
+    }]);
+    
+    angular.module('App').run(function($location, $rootScope) {
+      $rootScope.$on('$routeChangeSuccess', function (event, current, previous) {
+        $rootScope.title = current.$$route.title;
+      });
+    });
+    
+   

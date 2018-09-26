@@ -99,6 +99,10 @@
         icon: 'toc',
         link: '#subcategory/0'
       }, {
+        name: 'TOPPING',
+          icon: 'toc',
+          link: '#topping'
+      }, {
         name: 'PRODUCTS',
         icon: 'restaurant_menu',
         link: '#product/0'

@@ -5,8 +5,10 @@ function($rootScope, $scope, $http, $mdToast, $cookies, $mdDialog, $route, servi
     var self             = $scope;
 	var root             = $rootScope;
     self.loading         = true;
-
-    $rootScope.pagetitle = 'Stock Report';
+	 
+	root.toolbar_menu=null;
+	
+	$rootScope.pagetitle = 'Stock Report';
 	
 	self.parfrom_day = toISOLocal(new Date()).split("T")[0];
 	self.parto_day = toISOLocal(new Date()).split("T")[0];

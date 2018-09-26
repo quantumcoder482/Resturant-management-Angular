@@ -112,7 +112,7 @@ function StockControllerDialog($scope, $mdDialog, services, $mdToast, $route, st
 				 
                  services.getIngredientsByID(resp.data.ingredient).then(function(data){
 					 ingredient=data.data;
-					  ingredient[0].stock=ingredient[0].stock+resp.data.quantity+resp.data.stock_actual-resp.data.stock_previous;
+					  ingredient[0].stock=ingredient[0].stock+resp.data.quantity+resp.data.actual-resp.data.stock_previous;
 					    //alert(JSON.stringify(ingredient[0].stock, null, 4));
 					 
 					         services.updateIngredient(ingredient[0].id, ingredient[0]).then(function(resp1){
